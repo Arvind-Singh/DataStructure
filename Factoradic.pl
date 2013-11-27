@@ -3,73 +3,52 @@
 use POSIX;
 # Program to find nth unique Permutation of a combination.
 
-my @BaseArray=(0,1,2,3,4,5,6,7,8,9);
-#my @newarray=(0,1,2,3,4,5,6);
+#my @InputArray=(0,1,2,3,4,5,6); 
 my @InputArray=('A','B','C','D','E','F','G','H');
-my @factorial;
+my $factoradic =(0) x @InputArray;
 
-	print "Original Input = ",join(',',@newarray)."\n";
-my $len=$#InputArray;
+	my $len=$#InputArray;
+	my $pos=$ARGV[0];  # Nth Combination
+	my $numdigit=1;
 
-$factorial[0]=1;
-
-
-#Get factorial in a array
-foreach my $i (@BaseArray)
-{
-	if($i != 0)
+	if($pos  > factorial(9))
 	{
-		$factorial[$i]=$i*$factorial[$i-1];
+		print "Enter value less than factorial(9)\n";
+		exit;
 	}
-}
+	while (factorial($numdigit) < $pos){ $numdigit++;}
+	$numdigit--;
 
-my $pos=$ARGV[0];  # Nth Combination
-my $i=1;
+	print "Original Input = ",join(',',@InputArray)."\n";
 
-if($pos  > $factorial[9])
-{
-	print "Enter value less than $factorial[9]\n";
-	exit;
-}
-while ($factorial[$i] < $pos)
-{
-	$i++;
-}
-$i--;
-
-my $Maxdigit=$i; # Max factoroid we are going to use/generate.
-
-while($Maxdigit++ < $len)
-{
-	# Reset extra factoroid = 0 
-	$factorid[$digit]=0;
-}
-
-$Maxdigit=$i;
-
-while($i>=0)
-{
+	while($numdigit >=0)
+	{
 	# Break the position value (Decimal ) to factorial notation (!) and store in @factoradic
-	$factoradic[$i]= floor($pos/$factorial[$i]);
-	$rem= $pos % $factorial[$i];
-	$pos=$rem;
-	$i--;
-}
+		$factoradic[$numdigit]= floor($pos/factorial($numdigit));
+		$rem= $pos % factorial($numdigit);
+		$pos=$rem;
+		$numdigit--;
+	}
 
 	my $base=0;
 
 	# Now start placing the combination based on @factoradic  array	
-while($base <=$len )
-{
-	$ntharray[$base]=$InputArray[$factoradic[$len-$base]];
-	#delete the element used
-	for ($i=$factoradic[$len-$base];$i<$#InputArray;$i++)
+	while($base <=$len )
 	{
-		$InputArray[$i]=$InputArray[($i+1)];
+		$ntharray[$base]=$InputArray[$factoradic[$len-$base]];
+		#delete the element used
+		splice(@InputArray,$factoradic[$len-$base],1);
+		$base++;
 	}
-	pop(@InputArray);
-	#print "Temp array= @newarray ($#newarray)\n New array =@ntharray\n";
-	$base++;
-}
 
-print "Permutation at $ARGV[0] =".join(',',@ntharray)."\n";
+	print "Permutation at $ARGV[0] =".join(',',@ntharray)."\n";
+
+sub factorial()
+{
+	my $val=shift;
+	if($val <=1)
+	{
+		return 1;	
+	}
+	return $val*factorial($val-1);
+}
